@@ -25,18 +25,18 @@ model User {
   updatedAt DateTime @updatedAt
 
   // Relationships
-  company   Company    @relation(fields: [companyId], references: [id])
+  company   Company       @relation(fields: [companyId], references: [id])
   companyId Int
-  userRoles UserRole[]
+  roles     UsersOnRole[]
 }
 
-model UserRole {
-  id Int @id @default(autoincrement())
-
+model UsersOnRole {
   user   User @relation(fields: [userId], references: [id])
-  role   Role @relation(fields: [roleId], references: [id])
   userId Int
+  role   Role @relation(fields: [roleId], references: [id])
   roleId Int
+
+  @@id([userId, roleId])
 }
 
 model Role {
@@ -44,10 +44,10 @@ model Role {
   name        String
   description String?
 
-  createdAt      DateTime         @default(now())
-  updatedAt      DateTime         @updatedAt
-  PermissionRole PermissionRole[]
-  users          UserRole[]
+  createdAt   DateTime            @default(now())
+  updatedAt   DateTime            @updatedAt
+  permissions PermissionsOnRole[]
+  users       UsersOnRole[]
 }
 
 model Permission {
@@ -55,16 +55,16 @@ model Permission {
   name        String
   description String?
 
-  createdAt      DateTime         @default(now())
-  updatedAt      DateTime         @updatedAt
-  PermissionRole PermissionRole[]
+  createdAt DateTime            @default(now())
+  updatedAt DateTime            @updatedAt
+  roles     PermissionsOnRole[]
 }
 
-model PermissionRole {
-  id Int @id @default(autoincrement())
+model PermissionsOnRole {
+  role        Role       @relation(fields: [roleId], references: [id])
+  roleId      Int
+  permission  Permission @relation(fields: [pemissionId], references: [id])
+  pemissionId Int
 
-  permission   Permission @relation(fields: [permissionId], references: [id])
-  role         Role       @relation(fields: [roleId], references: [id])
-  permissionId Int
-  roleId       Int
+  @@id([roleId, pemissionId])
 }
